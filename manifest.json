@@ -1,0 +1,25 @@
+{
+    "manifest_version": 3,
+    "name": "Freedium Link Converter",
+    "version": "0.0.1",
+    "description": "Prepends freedium.cfd to Medium URLs",
+    "icons": {
+        "16": "images/icon.png",
+        "32": "images/icon.png",
+        "48": "images/icon.png",
+        "128": "images/icon.png"
+    },
+    "permissions": [
+        "activeTab",
+        "tabs"
+    ],
+    "action": {
+        "default_icon": {
+            "16": "images/favicon-16x16.png",
+            "48": "images/favicon-32x32.png"
+        }
+    },
+    "background": {
+        "service_worker": "background.js"
+    }
+}
