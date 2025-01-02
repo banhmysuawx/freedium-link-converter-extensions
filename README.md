@@ -1,15 +1,23 @@
 # Freedium Link Converter
 
 ## Description
+
 Freedium Link Converter is a Chrome extension that prepends `freedium.cfd` to Medium and Towards Data Science URLs.
 
 ## Features
+
 - Converts Medium and Towards Data Science URLs to use `freedium.cfd`
 - Easy to use with a single click
 
-## Installation
+## Installation (User Mode)
+
+1. **Download the Extension**
+   - Download the latest release from the [Releases](https://chromewebstore.google.com/detail/freedium-link-converter/enocadmdedhoajldcnlajbjaihpkccml) page.
+
+## Installation (Developer Mode)
 
 1. **Clone the Repository**
+
    ```bash
    git clone https://github.com/banhmysuawx/freedium-extension.git
    ```
