@@ -1,4 +1,3 @@
-```markdown
 # Freedium Link Converter
 
 ## Description
@@ -35,5 +34,3 @@ Freedium Link Converter is a Chrome extension that prepends `freedium.cfd` to Me
 ## License
 
 MIT License
-
-```
