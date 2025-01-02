@@ -19,7 +19,7 @@ Freedium Link Converter is a Chrome extension that prepends `freedium.cfd` to Me
 1. **Clone the Repository**
 
    ```bash
-   git clone https://github.com/banhmysuawx/freedium-extension.git
+   git clone https://github.com/banhmysuawx/freedium-link-converter-extensions.git
    ```
 
 2. **Navigate to the Directory**
