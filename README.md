@@ -28,7 +28,34 @@ Freedium Link Converter is a Chrome extension that prepends `freedium.cfd` to Me
    cd freedium-extension
    ```
 
-3. **Load the Extension in Chrome**
+3. **Build the Extension**
+
+   ```bash
+
+   # Create directory for zip contents
+
+   mkdir extension-build
+
+   # Copy all necessary files
+
+   cp manifest.json extension-build/
+   cp background.js extension-build/
+   cp -r images/ extension-build/images/
+   cp -r options/ extension-build/options/
+
+   # Create zip file
+
+   cd extension-build
+   zip -r ../freedium-extension.zip .
+   cd ..
+
+   # Clean up
+
+   rm -rf extension-build
+
+   ```
+
+4. **Load the Extension in Chrome**
    - Open Chrome and go to `chrome://extensions/`
    - Enable "Developer mode" in the top right corner
    - Click on "Load unpacked" and select the project directory
