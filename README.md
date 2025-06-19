@@ -63,6 +63,7 @@ Freedium Link Converter is a Chrome extension that prepends `freedium.cfd` to Me
 1. Navigate to a Medium or Towards Data Science article
 2. Click on the Freedium Link Converter icon in the toolbar
 3. The URL will be updated to use `https://freedium.cfd/`
+![toolbar](./assets/toolbar.png)
 
 ### Method 2: Using the context menu
 
@@ -75,6 +76,8 @@ Freedium Link Converter is a Chrome extension that prepends `freedium.cfd` to Me
    - Right-click on any Medium link
    - Select "Open in Freedium" from the context menu
    - The link will be opened in Freedium
+
+![context_menu](./assets/context_menu.png)
 
 ### Configuration options
 
