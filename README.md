@@ -8,6 +8,8 @@ Freedium Link Converter is a Chrome extension that prepends `freedium.cfd` to Me
 
 - Converts Medium and Towards Data Science URLs to use `freedium.cfd`
 - Easy to use with a single click
+- Supports context menu for quickly opening Medium pages in Freedium
+- Option to open Medium links in Freedium directly from the right-click menu
 
 ## Installation (User Mode)
 
@@ -31,28 +33,22 @@ Freedium Link Converter is a Chrome extension that prepends `freedium.cfd` to Me
 3. **Build the Extension**
 
    ```bash
-
    # Create directory for zip contents
-
    mkdir extension-build
 
    # Copy all necessary files
-
    cp manifest.json extension-build/
    cp background.js extension-build/
    cp -r images/ extension-build/images/
    cp -r options/ extension-build/options/
 
    # Create zip file
-
    cd extension-build
    zip -r ../freedium-extension.zip .
    cd ..
 
    # Clean up
-
    rm -rf extension-build
-
    ```
 
 4. **Load the Extension in Chrome**
@@ -62,9 +58,29 @@ Freedium Link Converter is a Chrome extension that prepends `freedium.cfd` to Me
 
 ## Usage
 
-1. Navigate to a Medium or Towards Data Science article.
-2. Click on the Freedium Link Converter extension icon in the toolbar.
-3. The URL will be updated to use `https://freedium.cfd/`.
+### Method 1: Using the extension icon
+
+1. Navigate to a Medium or Towards Data Science article
+2. Click on the Freedium Link Converter icon in the toolbar
+3. The URL will be updated to use `https://freedium.cfd/`
+
+### Method 2: Using the context menu
+
+1. **For the current Medium page**:
+   - Right-click anywhere on the page
+   - Select "Open in Freedium" from the context menu
+   - The page will be reopened using Freedium
+
+2. **For Medium links**:
+   - Right-click on any Medium link
+   - Select "Open in Freedium" from the context menu
+   - The link will be opened in Freedium
+
+### Configuration options
+
+- Access the extension options page to configure:
+  - Open in new tab or current tab
+  - Enable/disable automatic link opening when clicking the extension icon
 
 ## License
 

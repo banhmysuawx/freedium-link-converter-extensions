@@ -72,23 +72,82 @@ function getConfig(callback) {
   });
 }
 
+// Convert URL to Freedium URL
+function convertToFreediumUrl(url) {
+  return `https://freedium.cfd/${url.replace(/^https?:\/\//, "")}`;
+}
+
+// Open URL in Freedium
+function openInFreedium(url, config) {
+  const newUrl = convertToFreediumUrl(url);
+  
+  if (config.openInNewTab) {
+    chrome.tabs.create({ url: newUrl });
+  } else {
+    chrome.tabs.update({ url: newUrl });
+  }
+}
+
+// Extension button click handler
 chrome.action.onClicked.addListener(async (tab) => {
   console.log("clicked");
   const currentUrl = tab.url;
 
   // Check if URL is Medium-related
-  if (isMediumURL(currentUrl)) {
-    const currentUrl = tab.url.replace(/^https?:\/\//, "");
-    const newUrl = `https://freedium.cfd/${currentUrl}`;
-
+  if (await isMediumURL(currentUrl)) {
     // Retrieve user configuration
     getConfig((config) => {
       if (config.openLinksOnButtonClick) {
+        const newUrl = convertToFreediumUrl(currentUrl);
         if (config.openInNewTab) {
           chrome.tabs.create({ url: newUrl });
         } else {
           chrome.tabs.update(tab.id, { url: newUrl });
         }
+      }
+    });
+  }
+});
+
+// Create context menu items when extension is installed
+chrome.runtime.onInstalled.addListener(() => {
+  // Context menu for page
+  chrome.contextMenus.create({
+    id: "openPageInFreedium",
+    title: "Open in Freedium",
+    contexts: ["page"]
+  });
+
+  // Context menu for links
+  chrome.contextMenus.create({
+    id: "openLinkInFreedium",
+    title: "Open in Freedium",
+    contexts: ["link"]
+  });
+});
+
+// Handle context menu clicks
+chrome.contextMenus.onClicked.addListener((info, tab) => {
+  let url;
+  
+  if (info.menuItemId === "openPageInFreedium") {
+    url = tab.url;
+  } else if (info.menuItemId === "openLinkInFreedium") {
+    url = info.linkUrl;
+  }
+  
+  if (url) {
+    // Check if URL is Medium-related before proceeding
+    isMediumURL(url).then(isMedium => {
+      if (isMedium) {
+        getConfig(config => {
+          const newUrl = convertToFreediumUrl(url);
+          if (config.openInNewTab) {
+            chrome.tabs.create({ url: newUrl });
+          } else {
+            chrome.tabs.update(tab.id, { url: newUrl });
+          }
+        });
       }
     });
   }
