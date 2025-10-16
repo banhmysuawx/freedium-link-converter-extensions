@@ -166,7 +166,7 @@ This extension requires the following permissions:
 
 - The page may not be a Medium article
 - Try refreshing the page and clicking again
-- Some custom Medium publications may not be detected
+- Some custom Medium publications may not be detected (You can report missing domains via the GitHub issues page or Create a Pull Request to add them)
 
 ### Extension not working after update
 
