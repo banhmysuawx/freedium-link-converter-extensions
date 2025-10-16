@@ -35,6 +35,7 @@ export const mediumDomains = [
   "levelup.gitconnected.com",
   "blog.medium.com",
   "entrepreneurshandbook.co",
+  "python.plainenglish.io",
 ];
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -289,7 +290,7 @@ function scoreMediumSignals(headRawHTML) {
     score += 1;
     reasons.push('link[rel="search"][title="Medium"]');
   }
-  if (osdHref.some((h) => h === "/osd.xml")) {
+  if (osdHref.includes("/osd.xml")) {
     score += 1;
     reasons.push('link[rel="search"][href="/osd.xml"]');
   }

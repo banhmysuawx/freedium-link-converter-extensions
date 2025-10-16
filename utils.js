@@ -6,23 +6,6 @@
 // Tab management utilities
 
 /**
- * Get the currently active tab in the current window
- * @returns {Promise<chrome.tabs.Tab|null>} The active tab or null if not found
- */
-export async function getActiveTab() {
-  try {
-    const [activeTab] = await chrome.tabs.query({
-      active: true,
-      currentWindow: true,
-    });
-    return activeTab || null;
-  } catch (error) {
-    console.error("Error getting active tab:", error);
-    return null;
-  }
-}
-
-/**
  * Open a URL in a new tab or update the current tab
  * @param {string} url - The URL to open
  * @param {boolean} openInNewTab - Whether to open in a new tab
@@ -32,7 +15,12 @@ export async function openUrl(url, openInNewTab = true) {
   if (openInNewTab) {
     return chrome.tabs.create({ url });
   } else {
-    const activeTab = await getActiveTab();
+    // Get current active tab
+    const [activeTab] = await chrome.tabs.query({
+      active: true,
+      currentWindow: true,
+    });
+
     if (activeTab?.id) {
       return chrome.tabs.update(activeTab.id, { url });
     } else {
@@ -132,38 +120,8 @@ export async function getConfig(defaults = {}) {
   });
 }
 
-/**
- * Save configuration to chrome.storage.sync
- * @param {Object} config - Configuration object to save
- * @returns {Promise<void>}
- */
-export async function saveConfig(config) {
-  return new Promise((resolve, reject) => {
-    chrome.storage.sync.set(config, () => {
-      if (chrome.runtime.lastError) {
-        reject(chrome.runtime.lastError);
-      } else {
-        resolve();
-      }
-    });
-  });
-}
-
 // ─────────────────────────────────────────────────────────────────────────────
 // Error handling utilities
-
-/**
- * Log error with context information
- * @param {string} context - Context where error occurred
- * @param {Error} error - The error object
- */
-export function logError(context, error) {
-  console.error(`[Freedium] ${context}:`, {
-    message: error.message,
-    stack: error.stack,
-    timestamp: new Date().toISOString(),
-  });
-}
 
 /**
  * Handle error with user notification
@@ -172,7 +130,13 @@ export function logError(context, error) {
  * @param {boolean} notify - Whether to show notification to user
  */
 export function handleError(context, error, notify = false) {
-  logError(context, error);
+  // Log error with context
+  console.error(`[Freedium] ${context}:`, {
+    message: error.message,
+    stack: error.stack,
+    timestamp: new Date().toISOString(),
+  });
+
   showErrorBadge();
 
   if (notify) {
