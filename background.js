@@ -1,154 +1,138 @@
-// List of known Medium-related domains
-const mediumDomains = [
-  "medium.com",
-  "towardsdatascience.com",
-  "betterprogramming.pub",
-  "betterhumans.pub",
-  "medium.freecodecamp.org",
-  "uxdesign.cc",
-  "levelup.gitconnected.com",
-  "blog.medium.com",
-  "entrepreneurshandbook.co",
-];
+// background.js (MV3, type: module)
+// ─────────────────────────────────────────────────────────────────────────────
+// Wiring for browser action, context menus, and config storage.
+// Imports detection + conversion helpers.
 
-async function checkRedirectFromMedium(url) {
-  try {
-    const response = await fetch(url, {
-      method: "HEAD",
-      redirect: "manual", // Don't automatically follow redirects
-    });
+import { isMediumURL, convertToFreediumUrl } from "./detectMedium.js";
+import {
+  getConfig as getStorageConfig,
+  openUrl,
+  showNotification,
+  showLoadingBadge,
+  showSuccessBadge,
+  showErrorBadge,
+  handleError,
+} from "./utils.js";
 
-    // Check if it's a 301 redirect
-    if (response.status === 301 || response.status === 308) {
-      const redirectUrl = response.headers.get("location");
-      if (redirectUrl) {
-        // Check if original URL was from Medium
-        const originalUrl = new URL(url);
-        return mediumDomains.some(
-          (domain) =>
-            originalUrl.hostname === domain ||
-            originalUrl.hostname.endsWith("." + domain) ||
-            originalUrl.hostname.includes("medium")
-        );
-      }
-    }
-    return false;
-  } catch {
-    return false;
-  }
-}
-
-// Function to check if URL is Medium-related
-async function isMediumURL(url) {
-  try {
-    const urlObj = new URL(url);
-    // First check direct Medium domains
-    const isDirectMedium = mediumDomains.some(
-      (domain) =>
-        urlObj.hostname === domain ||
-        urlObj.hostname.endsWith("." + domain) ||
-        urlObj.hostname.includes("medium")
-    );
-
-    if (isDirectMedium) return true;
-
-    // If not direct Medium domain, check for redirect
-    return await checkRedirectFromMedium(url);
-  } catch {
-    return false;
-  }
-}
-
-// Default configuration
+// Default configuration (synced across devices)
 const defaultConfig = {
   openInNewTab: true,
   openLinksOnButtonClick: true,
 };
 
-// Retrieve configuration from storage or use default
-function getConfig(callback) {
-  chrome.storage.sync.get(defaultConfig, (items) => {
-    callback(items);
-  });
+// Utility: read config from chrome.storage.sync with defaults applied.
+async function getConfig() {
+  return getStorageConfig(defaultConfig);
 }
 
-// Convert URL to Freedium URL
-function convertToFreediumUrl(url) {
-  return `https://freedium.cfd/${url.replace(/^https?:\/\//, "")}`;
-}
+// Open a Freedium URL either in a new tab or current tab
+async function openInFreedium(url, opts) {
+  try {
+    const newUrl = convertToFreediumUrl(url);
+    const config = opts || (await getConfig());
 
-// Open URL in Freedium
-function openInFreedium(url, config) {
-  const newUrl = convertToFreediumUrl(url);
-  
-  if (config.openInNewTab) {
-    chrome.tabs.create({ url: newUrl });
-  } else {
-    chrome.tabs.update({ url: newUrl });
+    showLoadingBadge();
+    await openUrl(newUrl, config.openInNewTab);
+    showSuccessBadge();
+
+    return true;
+  } catch (error) {
+    handleError("open in Freedium", error, true);
+    return false;
   }
 }
 
-// Extension button click handler
+// ─────────────────────────────────────────────────────────────────────────────
+// Action button click: convert current page if it's Medium-related.
+
 chrome.action.onClicked.addListener(async (tab) => {
-  console.log("clicked");
+  if (!tab || !tab.url) {
+    showNotification(
+      "Cannot Open in Freedium",
+      "No valid URL found in the current tab",
+      "basic"
+    );
+    return;
+  }
+
   const currentUrl = tab.url;
 
-  // Check if URL is Medium-related
-  if (await isMediumURL(currentUrl)) {
-    // Retrieve user configuration
-    getConfig((config) => {
+  try {
+    showLoadingBadge();
+
+    const isMedium = await isMediumURL(currentUrl);
+
+    if (isMedium) {
+      const config = await getConfig();
       if (config.openLinksOnButtonClick) {
-        const newUrl = convertToFreediumUrl(currentUrl);
-        if (config.openInNewTab) {
-          chrome.tabs.create({ url: newUrl });
-        } else {
-          chrome.tabs.update(tab.id, { url: newUrl });
-        }
+        await openInFreedium(currentUrl, config);
+      } else {
+        showNotification(
+          "Freedium",
+          "Open links on button click is disabled. Enable it in settings.",
+          "basic"
+        );
+        showErrorBadge();
       }
-    });
+    } else {
+      showNotification(
+        "Not a Medium Article",
+        "This page doesn't appear to be a Medium article",
+        "basic"
+      );
+      showErrorBadge();
+    }
+  } catch (error) {
+    handleError("process action click", error, true);
   }
 });
 
-// Create context menu items when extension is installed
+// ─────────────────────────────────────────────────────────────────────────────
+// Context menus for page and links.
+
 chrome.runtime.onInstalled.addListener(() => {
-  // Context menu for page
   chrome.contextMenus.create({
     id: "openPageInFreedium",
     title: "Open in Freedium",
-    contexts: ["page"]
+    contexts: ["page"],
   });
 
-  // Context menu for links
   chrome.contextMenus.create({
     id: "openLinkInFreedium",
-    title: "Open in Freedium",
-    contexts: ["link"]
+    title: "Open link in Freedium",
+    contexts: ["link"],
   });
 });
 
-// Handle context menu clicks
-chrome.contextMenus.onClicked.addListener((info, tab) => {
+chrome.contextMenus.onClicked.addListener(async (info, tab) => {
   let url;
-  
   if (info.menuItemId === "openPageInFreedium") {
-    url = tab.url;
+    url = tab?.url;
   } else if (info.menuItemId === "openLinkInFreedium") {
     url = info.linkUrl;
   }
-  
-  if (url) {
-    // Check if URL is Medium-related before proceeding
-    isMediumURL(url).then(isMedium => {
-      if (isMedium) {
-        getConfig(config => {
-          const newUrl = convertToFreediumUrl(url);
-          if (config.openInNewTab) {
-            chrome.tabs.create({ url: newUrl });
-          } else {
-            chrome.tabs.update(tab.id, { url: newUrl });
-          }
-        });
-      }
-    });
+
+  if (!url) {
+    showNotification("Cannot Open in Freedium", "No valid URL found", "basic");
+    return;
+  }
+
+  try {
+    showLoadingBadge();
+
+    const isMedium = await isMediumURL(url);
+
+    if (isMedium) {
+      await openInFreedium(url);
+    } else {
+      showNotification(
+        "Not a Medium Article",
+        "This URL doesn't appear to be a Medium article",
+        "basic"
+      );
+      showErrorBadge();
+    }
+  } catch (error) {
+    handleError("process context menu click", error, true);
   }
 });

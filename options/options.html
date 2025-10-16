@@ -1,16 +1,60 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Freedium Settings</title>
     <style>
+        * {
+            box-sizing: border-box;
+        }
+
         body {
             padding: 20px;
-            font-family: system-ui;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #f5f5f5;
+        }
+
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            margin-top: 0;
+            color: #333;
+            font-size: 24px;
+            border-bottom: 2px solid #2196F3;
+            padding-bottom: 10px;
         }
 
         .option-row {
-            margin: 20px 0;
+            margin: 24px 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .option-info {
+            flex: 1;
+        }
+
+        .option-label {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 4px;
+            font-size: 16px;
+        }
+
+        .option-description {
+            color: #666;
+            font-size: 13px;
+            margin-top: 4px;
         }
 
         .switch {
@@ -18,6 +62,7 @@
             display: inline-block;
             width: 60px;
             height: 34px;
+            flex-shrink: 0;
         }
 
         .switch input {
@@ -54,37 +99,80 @@
             background-color: #2196F3;
         }
 
+        input:focus+.slider {
+            box-shadow: 0 0 0 3px rgba(33, 150, 243, 0.3);
+            outline: none;
+        }
+
         input:checked+.slider:before {
             transform: translateX(26px);
         }
 
         #status {
-            color: green;
+            color: #4CAF50;
             margin-top: 20px;
+            padding: 12px;
+            background-color: #e8f5e9;
+            border-radius: 4px;
+            text-align: center;
+            font-weight: 600;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        #status.show {
+            opacity: 1;
+        }
+
+        .footer {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #e0e0e0;
+            text-align: center;
+            color: #666;
+            font-size: 12px;
         }
     </style>
 </head>
 
 <body>
-    <h2>Freedium Settings</h2>
+    <div class="container">
+        <h2>Freedium Settings</h2>
 
-    <div class="option-row">
-        <label>Open in new tab:</label>
-        <label class="switch">
-            <input type="checkbox" id="openInNewTab">
-            <span class="slider"></span>
-        </label>
+        <div class="option-row">
+            <div class="option-info">
+                <label for="openInNewTab" class="option-label">Open in new tab</label>
+                <div class="option-description">
+                    Open Freedium articles in a new tab instead of the current tab
+                </div>
+            </div>
+            <label class="switch">
+                <input type="checkbox" id="openInNewTab" aria-label="Toggle open in new tab">
+                <span class="slider" role="presentation"></span>
+            </label>
+        </div>
+
+        <div class="option-row">
+            <div class="option-info">
+                <label for="openLinksOnButtonClick" class="option-label">Open links on button
+                    click</label>
+                <div class="option-description">
+                    Automatically open articles in Freedium when clicking the extension icon
+                </div>
+            </div>
+            <label class="switch">
+                <input type="checkbox" id="openLinksOnButtonClick"
+                    aria-label="Toggle open links on button click">
+                <span class="slider" role="presentation"></span>
+            </label>
+        </div>
+
+        <div id="status" role="status" aria-live="polite"></div>
+
+        <div class="footer">
+            Freedium Link Converter v0.1.0
+        </div>
     </div>
-
-    <div class="option-row">
-        <label>Open links on button click:</label>
-        <label class="switch">
-            <input type="checkbox" id="openLinksOnButtonClick">
-            <span class="slider"></span>
-        </label>
-    </div>
-
-    <div id="status"></div>
 
     <script src="options.js"></script>
 </body>

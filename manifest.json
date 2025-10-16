@@ -1,8 +1,8 @@
 {
     "manifest_version": 3,
     "name": "Freedium Link Converter",
-    "version": "0.0.3",
-    "description": "Prepends freedium.cfd to Medium URLs",
+    "version": "0.1.0",
+    "description": "Convert Medium articles to Freedium for ad-free reading experience",
     "icons": {
         "16": "images/icon.png",
         "32": "images/icon.png",
@@ -13,18 +13,25 @@
         "activeTab",
         "tabs",
         "storage",
-        "contextMenus"
+        "contextMenus",
+        "notifications"
+    ],
+    "host_permissions": [
+        "*://*/*"
     ],
     "action": {
+        "default_title": "Open in Freedium",
         "default_icon": {
             "16": "images/favicon-16x16.png",
             "48": "images/favicon-32x32.png"
         }
     },
     "background": {
-        "service_worker": "background.js"
+        "service_worker": "background.js",
+        "type": "module"
     },
     "options_ui": {
-        "page": "options/options.html"
+        "page": "options/options.html",
+        "open_in_tab": false
     }
 }

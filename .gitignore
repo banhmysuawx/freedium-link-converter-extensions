@@ -39,3 +39,5 @@ jspm_packages
 *.zip
 
 extension-build/
+
+docs/

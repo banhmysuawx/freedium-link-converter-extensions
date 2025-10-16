@@ -1,3 +1,7 @@
+// options.js
+// ─────────────────────────────────────────────────────────────────────────────
+// Options page script for Freedium Link Converter
+
 // Saves options to chrome.storage
 function saveOptions() {
   const openInNewTab = document.getElementById("openInNewTab").checked;
@@ -11,21 +15,24 @@ function saveOptions() {
       openLinksOnButtonClick: openLinksOnButtonClick,
     },
     () => {
+      // Show save confirmation
       const status = document.getElementById("status");
-      status.textContent = "Options saved.";
+      status.textContent = "Settings saved successfully!";
+      status.classList.add("show");
+
+      // Hide after 2 seconds
       setTimeout(() => {
-        status.textContent = "";
+        status.classList.remove("show");
       }, 2000);
     }
   );
 }
 
-// Restores select box and checkbox state using the preferences
-// stored in chrome.storage.
+// Restores checkbox state using the preferences stored in chrome.storage
 function restoreOptions() {
   chrome.storage.sync.get(
     {
-      openInNewTab: false,
+      openInNewTab: true,
       openLinksOnButtonClick: true,
     },
     (items) => {
@@ -36,7 +43,10 @@ function restoreOptions() {
   );
 }
 
+// Initialize on DOM load
 document.addEventListener("DOMContentLoaded", restoreOptions);
+
+// Add change listeners to auto-save
 document.getElementById("openInNewTab").addEventListener("change", saveOptions);
 document
   .getElementById("openLinksOnButtonClick")
