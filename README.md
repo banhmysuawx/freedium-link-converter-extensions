@@ -135,7 +135,7 @@ The extension automatically detects Medium articles on:
 1. **Domain Detection** - Instantly recognizes known Medium domains
 2. **Metadata Analysis** - Analyzes page metadata for Medium-specific signals (mobile app IDs, structured data, etc.)
 3. **Smart Caching** - Remembers detection results for 10 minutes to improve performance
-4. **URL Conversion** - Converts Medium URLs to Freedium format: `https://freedium.cfd/[original-url]`
+4. **URL Conversion** - Converts Medium URLs to Freedium format: `https://freedium-mirror.cfd/[original-url]`
 
 ## 🔒 Privacy & Permissions
 

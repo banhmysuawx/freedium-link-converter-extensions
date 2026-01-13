@@ -397,6 +397,6 @@ export async function isMediumURL(url) {
 // Freedium helpers
 
 export function convertToFreediumUrl(url) {
-  // Freedium format: https://freedium.cfd/<original-host-and-path>
-  return `https://freedium.cfd/${url.replace(/^https?:\/\//, "")}`;
+  // Freedium format: https://freedium-mirror.cfd/<original-host-and-path>
+  return `https://freedium-mirror.cfd/${url.replace(/^https?:\/\//, "")}`;
 }
